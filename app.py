@@ -5,8 +5,8 @@ import plotly.express as px
 from textblob import TextBlob
 
 # Load the Excel files
-topics_df = pd.read_excel('3800topics.xlsx')
-tweets_df = pd.read_excel('alltweetsembedded.xlsx')
+topics_df = pd.read_excel('alltopics.xlsx', engine='openpyxl')
+tweets_df = pd.read_excel('alltweetsembedded.xlsx', engine='openpyxl')
 
 # Preprocess the data
 tweets_df['Candidates'] = tweets_df['Candidates'].apply(ast.literal_eval)
