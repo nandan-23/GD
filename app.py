@@ -5,15 +5,15 @@ import plotly.express as px
 from textblob import TextBlob
 
 # Load the Excel files
-topics_df = pd.read_excel('topics_list.xlsx')
-tweets_df = pd.read_excel('Filtered_True_vals_with_dates.xlsx')
+topics_df = pd.read_excel('3800topics.xlsx')
+tweets_df = pd.read_excel('alltweetsembedded.xlsx')
 
 # Preprocess the data
-tweets_df['LLama_candidates_NEW'] = tweets_df['LLama_candidates_NEW'].apply(ast.literal_eval)
-tweets_df['Date'] = pd.to_datetime(tweets_df['Date'])
+tweets_df['Candidates'] = tweets_df['Candidates'].apply(ast.literal_eval)
+tweets_df['Date'] = pd.to_datetime(tweets_df['Data'])
 
 topics_df['Topic'] = topics_df['Topic'].str.lower().str.strip()
-tweets_df['LLama_candidates_NEW'] = tweets_df['LLama_candidates_NEW'].apply(lambda x: [topic.lower().strip() for topic in x])
+tweets_df['Candidates'] = tweets_df['Candidates'].apply(lambda x: [topic.lower().strip() for topic in x])
 
 # Find the earliest and latest tweet dates
 earliest_date = tweets_df['Date'].min()
@@ -21,7 +21,7 @@ latest_date = tweets_df['Date'].max()
 
 # Function to filter tweets by topic
 def filter_tweets_by_topic(topic):
-    return tweets_df[tweets_df['LLama_candidates_NEW'].apply(lambda x: topic in x)]
+    return tweets_df[tweets_df['Candidates'].apply(lambda x: topic in x)]
 
 # Function to get the frequency of tweets over time for a given topic, grouped by weeks
 def get_topic_frequency_over_time(topic):
@@ -50,13 +50,16 @@ def get_sentiment_distribution(topic):
     return sentiment_distribution
 
 # Function to get up to 5 tweets for a topic
-def get_sample_tweets(topic, num_tweets=5):
+def get_sample_tweets(topic, num_tweets=10):
     filtered_tweets = filter_tweets_by_topic(topic)
     sample_tweets = filtered_tweets[['Date', 'TextofThePost']].head(num_tweets)
     return sample_tweets
 
 # Extract unique topics from the tweets dataframe
-unique_topics = tweets_df['LLama_candidates_NEW'].explode().unique()
+unique_topics = tweets_df['Candidates'].explode().unique()
+
+# Suggested topics to add
+suggested_topics = ['ai-driven data privacy', 'embedded ai', 'intelligent chatbots', 'genai for coding','intelligent voice assistant']
 
 # Streamlit app
 st.set_page_config(layout="wide")  # Set the layout to wide
@@ -64,6 +67,14 @@ st.title("Tweet Frequency and Sentiment Analysis by Topic")
 
 # Multiselect for selecting topics
 selected_topics = st.multiselect('Select topics:', unique_topics, default=[])
+
+# Display suggested topics under the dropdown
+st.write("Suggested topics:")
+cols = st.columns(len(suggested_topics))
+for idx, topic in enumerate(suggested_topics):
+    if cols[idx].button(topic):
+        selected_topics.append(topic)
+        st.session_state.added_topics = list(set(selected_topics))
 
 # Initialize or update the session state for added topics
 if 'added_topics' not in st.session_state:
@@ -86,6 +97,7 @@ if not all_frequency_df.empty:
     st.plotly_chart(fig, use_container_width=True)  # Ensure the graph uses the full container width
 else:
     st.write("No topics selected. Please select topics to visualize.")
+
 
 # Sentiment Analysis Section
 st.sidebar.title("Sentiment Analysis")
