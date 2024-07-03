@@ -60,7 +60,7 @@ unique_topics = tweets_df['LLama_candidates_NEW'].explode().unique()
 
 # Streamlit app
 st.set_page_config(layout="wide")  # Set the layout to wide
-st.title("Tweet Frequency and Sentiment Analysis by Topic")
+st.title("Tweet Frequency by Topic")
 
 # Multiselect for selecting topics
 selected_topics = st.multiselect('Select topics:', unique_topics, default=[])
