@@ -60,7 +60,7 @@ unique_topics = tweets_df['LLama_candidates_NEW'].explode().unique()
 
 # Streamlit app
 st.set_page_config(layout="wide")  # Set the layout to wide
-st.title("Tweet Frequency by Topic")
+st.title("Tweet Frequency and Sentiment Analysis by Topic")
 
 # Multiselect for selecting topics
 selected_topics = st.multiselect('Select topics:', unique_topics, default=[])
@@ -82,7 +82,7 @@ for topic in st.session_state.added_topics:
 if not all_frequency_df.empty:
     fig = px.line(all_frequency_df, x='Date', y='Frequency', color='Topic', title='Tweet Frequency for Selected Topics', markers=True)
     fig.update_xaxes(range=[earliest_date, latest_date], dtick="W1", tickformat="%d-%b-%Y")
-    fig.update_layout(xaxis=dict(tickmode='linear', tick0=earliest_date, dtick=604800000), height=400)  # Adjust height and width for a larger graph
+    fig.update_layout(xaxis=dict(tickmode='linear', tick0=earliest_date, dtick=604800000), height=600)  # Adjust height and width for a larger graph
     st.plotly_chart(fig, use_container_width=True)  # Ensure the graph uses the full container width
 else:
     st.write("No topics selected. Please select topics to visualize.")
@@ -96,6 +96,9 @@ else:
     selected_sentiment_topic = st.sidebar.selectbox('Select a topic for sentiment analysis:', st.session_state.added_topics)
 
 if selected_sentiment_topic:
+    total_tweets = len(filter_tweets_by_topic(selected_sentiment_topic))
+    st.sidebar.write(f"Total tweets for {selected_sentiment_topic}: {total_tweets}")
+
     sentiment_distribution = get_sentiment_distribution(selected_sentiment_topic)
     fig_sentiment = px.pie(sentiment_distribution, values='Count', names='Sentiment', title=f'Sentiment Distribution for {selected_sentiment_topic}')
     st.sidebar.plotly_chart(fig_sentiment)
