@@ -115,9 +115,9 @@ if selected_sentiment_topic:
     fig_sentiment = px.pie(sentiment_distribution, values='Count', names='Sentiment', title=f'Sentiment Distribution for {selected_sentiment_topic}')
     st.sidebar.plotly_chart(fig_sentiment)
 
-    st.sidebar.title(f'Top 5 Tweets for {selected_sentiment_topic}')
-    sample_tweets = get_sample_tweets(selected_sentiment_topic)
-    for i, row in sample_tweets.iterrows():
-        st.sidebar.write(f"{row['Date']}: {row['TextofThePost']}")
+    # st.sidebar.title(f'Top 5 Tweets for {selected_sentiment_topic}')
+    # sample_tweets = get_sample_tweets(selected_sentiment_topic)
+    # for i, row in sample_tweets.iterrows():
+    #     st.sidebar.write(f"{row['Date']}: {row['TextofThePost']}")
 else:
     st.sidebar.write("No topic selected for sentiment analysis.")
